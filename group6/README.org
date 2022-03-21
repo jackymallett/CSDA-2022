@@ -1,0 +1,42 @@
+#+TITLE: Iceland Scanner
+
+A "polite" concurrent port scanner. This scanner was made to scan multiple
+hosts/ports and write the results to a sqlite database. The scanner scans 256
+(by default) hosts concurrently but waits for 500-1000ms between scanning two
+ports on the same host.
+
+* Scanning
+The scanner reads hosts and ports from files. The hosts to scan should be put in
+[[file:./hostlist.txt][hostlist.txt]] and the ports to scan on each host should be put in [[file:./portlist.txt][portlist.txt]].
+
+The hosts should be separated by newline and can be given as IP addresses,
+hostnames, or in CIDR notation.
+
+The ports should be separated by newline and can be given as a single port, or
+port ranges separated by dashes ('-').
+
+The scanner requires [[https://go.dev/][Go]] and [[https://github.com/mattn/go-sqlite3][go-sqlite3]].  To run the scanner, simply run
+#+BEGIN_SRC bash
+./start.sh
+#+END_SRC bash
+The output will be written to a sqlite database called scan.db.
+
+This will run the following commands.
+#+BEGIN_SRC bash
+./iceland_scanner -hosts hostlist.txt -ports top_1000_ports.txt
+#+END_SRC bash
+which will scan the top 1000 scanned ports on every host.
+
+#+BEGIN_SRC bash
+./iceland_scanner -known-open -ports all_ports_minus_top_1000.txt
+#+END_SRC bash
+which will scan the remaining ports on every host that had some open port.
+
+#+BEGIN_SRC bash
+./iceland_scanner -vuln-scan
+#+END_SRC bash
+which will do a [[https://nmap.org/][nmap]] vulnerability scan on every open host:port combination.
+
+* Authors
+Bjarni Dagur Thor Kárason
+Sigurjón Ingi Jónsson
